@@ -1,4 +1,8 @@
 import axios from 'axios';
+import { PostDetail } from './Components/PostDetail';
+import { PostList } from './Components/PostList';
+import { Route, Switch, useHistory } from 'react-router-dom';
+import { Container } from '@material-ui/core';
 import { useState, useEffect } from 'react';
 
 function App() {
@@ -14,18 +18,25 @@ function App() {
       });
   }, []);
 
+  const history = useHistory();
+
+  const handleBackButtonClick = () => {
+    history.goBack();
+  };
+
   return (
-    <div>
-      <ul>
-        {posts.map(post => (
-          <li key={post.id}>
-            <h2>{post.title}</h2>
-            <p>{post.body}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Container maxWidth="md">
+      <Switch>
+        <Route path="/post/:postId">
+          <PostDetail handleBackButtonClick={handleBackButtonClick} />
+        </Route>
+        <Route path="/">
+          <PostList posts={posts} />
+        </Route>
+      </Switch>
+    </Container>
   );
 }
+
 
 export default App;
