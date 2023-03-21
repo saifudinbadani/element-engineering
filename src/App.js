@@ -1,15 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Container, AppBar, Toolbar, Typography, Grid, Card, CardContent, CardActions, Button } from '@mui/material';
+import { Container, AppBar, Toolbar, Typography, Grid, Box, Pagination } from '@mui/material';
 import axios from 'axios';
+import Post from './Post';
 
 function App() {
   const [posts, setPosts] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const handleChangePage = (event, value) => {
+    setPage(value);
+  };
 
   useEffect(() => {
-    axios.get('https://jsonplaceholder.typicode.com/posts')
-      .then((response) => setPosts(response.data))
+    axios.get(`https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=9`)
+      .then((response) => {
+        setPosts(response.data);
+        const totalPosts = response.headers['x-total-count'];
+        setTotalPages(Math.ceil(totalPosts / 9));
+      })
       .catch((error) => console.log(error));
-  }, []);
+  }, [page]);
 
   return (
     <div>
@@ -18,28 +29,19 @@ function App() {
           <Typography variant="h6">My Blog</Typography>
         </Toolbar>
       </AppBar>
-      <Container maxWidth="lg" sx={{ paddingTop: '2rem' }}>
-        <Grid container spacing={3}>
-          {posts.map((post) => (
-            <Grid item key={post.id} xs={12} sm={6} md={4}>
-              <Card>
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="h2">
-                    {post.title}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary" component="p">
-                    {post.body}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button size="small" color="primary">
-                    View Post
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+      <Container maxWidth="lg">
+        <Box mt={3}>
+          <Grid container spacing={2}>
+            {posts.map((post) => (
+              <Grid item key={post.id} xs={12} sm={6} md={4}>
+                <Post post={post} />
+              </Grid>
+            ))}
+          </Grid>
+          <Box mt={3} display="flex" justifyContent="center">
+            <Pagination count={totalPages} page={page} onChange={handleChangePage} />
+          </Box>
+        </Box>
       </Container>
     </div>
   );
