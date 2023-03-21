@@ -1,3 +1,5 @@
+import React from 'react';
+import { Button } from '@mui/material';
 import logo from './logo.svg';
 import './App.css';
 
@@ -9,6 +11,9 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
+        <Button variant="contained" color="primary">
+          Hello, Material-UI!
+        </Button>
         <a
           className="App-link"
           href="https://reactjs.org"
